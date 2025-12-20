@@ -1,0 +1,2 @@
+grey; 11111111111; kerch; snt zaliv; osn
+elzer; 22222222222; kerch; snt zaliv; osn
