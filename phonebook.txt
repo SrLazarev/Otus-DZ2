@@ -1,2 +1,4 @@
-grey; 11111111111; kerch; snt zaliv; osn
-elzer; 22222222222; kerch; snt zaliv; osn
+Grey;11111111;kerch;SNT Zaliv;Osn
+Jack;11113333;Kerch;Kuor;Tipeman
+Alexandr;11115555;Kerch;Fabrika;Hram
+2;2;2;2;2
