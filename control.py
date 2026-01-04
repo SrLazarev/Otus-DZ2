@@ -1,15 +1,14 @@
-import sys
 import view
 import model
-import text
 
 
 def start_app():
     """Запуск программы"""
+    phonebook = model.PhoneBook('phonebook.txt')
     while True:
         try:
             view.show_menu()
-            user_choice = view.input_data(text.input_choice)
+            user_choice = view.input_data(view.input_choice)
             user_choice = int(user_choice)
             menu_items= [
                 '',
@@ -22,62 +21,59 @@ def start_app():
                 delete_contacts,
                 exit_program,
             ]
-            menu_items[int(user_choice)]()
+            menu_items[int(user_choice)](phonebook)
         except IndexError:
-            view.print_message(text.error_choice)
+            view.print_message(view.error_choice)
 
 
-def open_contacts():
+def open_contacts(pb: model.PhoneBook):
     """Открытие телефонной книги."""
-    model.read_file('phonebook.txt')
-    view.print_message(text.read_phonebook_successful)
+    pb.read_file()
+    view.print_message(view.read_phonebook_successful)
 
-def save_contacts():
+def save_contacts(pb: model.PhoneBook):
     """Сохранение телефонной книги."""
-    model.save_file('phonebook.txt')
-    view.print_message(text.save_phonebook_successful)
+    pb.save_file()
+    view.print_message(view.save_phonebook_successful)
 
-def show_contacts():
+def show_contacts(pb: model.PhoneBook):
     """Показывает все контакты."""
-    view.show_contact(model.phonebook,text.empty_book_error)
+    view.show_contact(pb.phonebook,view.error_empty_book)
 
-def add_contacts():
+def add_contacts(pb: model.PhoneBook):
     """Добавление нового контакта."""
-    contact = view.input_data(text.input_add_contact)
-    model.add_contact(contact)
-    view.print_message(text.add_contact_successful.format(name=contact[0]))
+    contact = view.input_data(view.input_add_contact)
+    pb.add_contact(dict(zip(model.PhoneBook.FIELDS, contact)))  # Преобразуем список в словарь
+    view.print_message(view.add_contact_successful.format(name=contact[0]))
 
-def find_contacts():
+def find_contacts(pb: model.PhoneBook):
     """Поиск контакта по ключевому слову."""
-    search_word = view.input_data(text.input_search_word)
-    result = model.find_contact(search_word)
-    view.show_contacts(result, text.empty_find_error.format(word=search_word))
+    search_word = view.input_data(view.input_search_word)
+    result = pb.find_contact(search_word)
+    view.show_contact(result, view.error_empty_find.format(word=search_word))
 
-def edit_contacts():
+def edit_contacts(pb: model.PhoneBook):
     """Редактирование выбранного контакта."""
-    id_edit = view.input_data(text.input_to_do_edit)
-    edited_contact = view.input_data(text.input_edit_contact)
-    contact_name = model.edit_contact(id_edit, edited_contact)
-    view.print_message(text.edit_contact_successful.format(name=contact_name))
+    id_edit = view.input_data(view.input_id_to_edit)
+    if id_edit and id_edit.isdigit():
+        id_edit = int(id_edit)
+        if id_edit in pb.phonebook:
+            edited_contact = view.input_data(view.input_edit_contact)
+            contact_name = pb.edit_contact(id_edit, edited_contact)
+            view.print_message(view.edit_contact_successful.format(name=contact_name))
+        else:
+            view.print_message(view.id_not_found)
+    else:
+        view.print_message(view.error_id_format)
 
-def delete_contacts():
+def delete_contacts(pb: model.PhoneBook):
     """Удаление контакта по выбранному ID."""
-    id_delete = view.input_data(text.input_id_to_delete)
-    contact_name = model.delete_contact(id_delete)
-    view.print_message(text.delete_contact_successful.format(name=contact_name))
+    id_delete = view.input_data(view.input_id_to_delete)
+    contact_name = pb.delete_contact(id_delete)
+    view.print_message(view.delete_contact_successful.format(name=contact_name))
 
-def exit_program():
+def exit_program(*args):
     """Завершение работы программы."""
-    view.print_message(text.exit_message)
-    sys.exit()
-
-
-
-
-
-
-
-
-
-
+    view.print_message(view.exit_message)
+    exit()
 
